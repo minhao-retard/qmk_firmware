@@ -33,24 +33,42 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (record->event.pressed) {
         switch(keycode) {
-            case K_AE:
-                SEND_STRING(SS_RALT(SS_LSFT("'"))"a");
-                return false;
-            case K_OE:
-                SEND_STRING(SS_RALT(SS_LSFT("'"))"o");
-                return false;
-            case K_UE:
-                SEND_STRING(SS_RALT(SS_LSFT("'"))"u");
-                return false;
-			case K_SS:
-                SEND_STRING(SS_RALT("s"));
-                return false;
-			case K_QUOT:
-			    SEND_STRING("'");
-                return false;
-        }
-    }
+        case K_AE:
+		    if (record->event.pressed && get_mods() & MOD_BIT(KC_LSHIFT)) {
+				SEND_STRING(SS_RALT(SS_LSFT("'"))"A");
+			}
+			else if(record->event.pressed && !(get_mods() & MOD_BIT(KC_LSHIFT))) { 
+				SEND_STRING(SS_RALT(SS_LSFT("'"))"a");
+			}
+            return false;
+        case K_OE:
+		    if (record->event.pressed && get_mods() & MOD_BIT(KC_HYPR)) {
+				SEND_STRING(SS_RALT(SS_LSFT("'"))"O");
+			}
+			else if(record->event.pressed && !(get_mods() & MOD_BIT(KC_LSHIFT))) { 
+				SEND_STRING(SS_RALT(SS_LSFT("'"))"o");
+			}
+            return false;
+        case K_UE:
+		    if (record->event.pressed && get_mods() & MOD_BIT(KC_LSHIFT)) {
+				SEND_STRING(SS_RALT(SS_LSFT("'"))"U");
+			}
+			else if(record->event.pressed && !(get_mods() & MOD_BIT(KC_LSHIFT))) { 
+				SEND_STRING(SS_RALT(SS_LSFT("'"))"u");
+			}
+            return false;
+		case K_SS:
+			SEND_STRING(SS_RALT("s"));
+            return false;
+		case K_QUOT:
+		    if (record->event.pressed && get_mods() & MOD_BIT(KC_LSHIFT)) {
+				SEND_STRING((SS_LSFT("' ")));
+			}
+			else if(record->event.pressed && !(get_mods() & MOD_BIT(KC_LSHIFT))) { 
+				SEND_STRING("' ");
+			}
+            return false;
+       }
     return true;
 };
