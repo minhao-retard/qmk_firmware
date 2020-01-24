@@ -1,5 +1,8 @@
 #include QMK_KEYBOARD_H
 
+#define IS_COMMAND() (get_mods() == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)))
+#define IS_COMMAND_GAY() (get_mods() & (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)))
+
 enum custom_keycodes {
     K_AE = SAFE_RANGE,
     K_OE,
@@ -20,7 +23,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,   KC_F12,  KC_PGUP,
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,  _______, KC_PGDOWN,
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,       KC_PSCR,
-            _______,      _______, _______, BL_ON,   _______, _______, _______, _______, KC_VOLD, KC_VOLU, KC_MUTE,  KC_DEL,  _______,
+            _______,      _______, _______, RGB_TOG, _______, _______, _______, _______, KC_VOLD, KC_VOLU, KC_MUTE,  KC_DEL,  _______,
         _______, _______, _______,                            _______,                   _______, _______, KC_HOME,  KC_END,  KC_INS
     ),
     [2] = LAYOUT(
@@ -35,40 +38,45 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         switch(keycode) {
         case K_AE:
-		    if (record->event.pressed && get_mods() & MOD_BIT(KC_LSHIFT)) {
-				SEND_STRING(SS_RALT(SS_LSFT("'"))"A");
+		    if (record->event.pressed && IS_COMMAND_GAY()) {
+				SEND_STRING(SS_LSFT("'a"));
 			}
-			else if(record->event.pressed && !(get_mods() & MOD_BIT(KC_LSHIFT))) { 
-				SEND_STRING(SS_RALT(SS_LSFT("'"))"a");
+			else if(record->event.pressed && !IS_COMMAND_GAY()) { 
+				SEND_STRING(SS_LSFT("'")"a");
 			}
             return false;
         case K_OE:
-		    if (record->event.pressed && get_mods() & MOD_BIT(KC_HYPR)) {
-				SEND_STRING(SS_RALT(SS_LSFT("'"))"O");
+		    if (record->event.pressed && IS_COMMAND_GAY()) {
+				SEND_STRING(SS_LSFT("'o"));
 			}
-			else if(record->event.pressed && !(get_mods() & MOD_BIT(KC_LSHIFT))) { 
-				SEND_STRING(SS_RALT(SS_LSFT("'"))"o");
+			else if(record->event.pressed && !IS_COMMAND_GAY()) { 
+				SEND_STRING(SS_LSFT("'")"o");
 			}
             return false;
         case K_UE:
-		    if (record->event.pressed && get_mods() & MOD_BIT(KC_LSHIFT)) {
-				SEND_STRING(SS_RALT(SS_LSFT("'"))"U");
+		    if (record->event.pressed && IS_COMMAND_GAY()) {
+				SEND_STRING(SS_LSFT("'u"));
 			}
-			else if(record->event.pressed && !(get_mods() & MOD_BIT(KC_LSHIFT))) { 
-				SEND_STRING(SS_RALT(SS_LSFT("'"))"u");
+			else if(record->event.pressed && !IS_COMMAND_GAY()) { 
+				SEND_STRING(SS_LSFT("'")"u");
 			}
             return false;
 		case K_SS:
-			SEND_STRING(SS_RALT("s"));
+			if (record->event.pressed)
+				SEND_STRING(SS_RALT("s"));
             return false;
 		case K_QUOT:
-		    if (record->event.pressed && get_mods() & MOD_BIT(KC_LSHIFT)) {
+		    if (record->event.pressed && IS_COMMAND()) {
 				SEND_STRING((SS_LSFT("' ")));
 			}
-			else if(record->event.pressed && !(get_mods() & MOD_BIT(KC_LSHIFT))) { 
+			else if(record->event.pressed && !IS_COMMAND()) { 
 				SEND_STRING("' ");
 			}
             return false;
        }
     return true;
 };
+
+void matrix_init_user() {
+	rgblight_mode(RGBLIGHT_MODE_STATIC_LIGHT);
+}
